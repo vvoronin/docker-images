@@ -1,7 +1,5 @@
-FROM ubuntu 
+FROM ubuntu:14.04 
 
 MAINTAINER Viktor Voronin <voronin@x12.su>
 
-WORKDIR /
-COPY tools /
- 
+ADD /tools/apt /tools/
