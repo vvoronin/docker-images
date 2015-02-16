@@ -3,7 +3,7 @@ MAINTAINER Viktor Voronin <voronin@x12.su>
 
 RUN /tools/apt build-essential wget libncurses5-dev expect libz-dev libxml2-dev libreadline-dev flex
 
-WOKDIR /tmp
+WORKDIR /tmp
  
 RUN wget -Omysql-4.6.2-1.tar.gz https://github.com/infinidb/mysql/archive/4.6.2-1.tar.gz &&\
 	tar -zxf mysql-4.6.2-1.tar.gz &&\
