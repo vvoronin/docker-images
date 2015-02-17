@@ -17,5 +17,5 @@ RUN wget -Omysql-4.6.2-1.tar.gz https://github.com/infinidb/mysql/archive/4.6.2-
 	ln -s infinidb-4.6.2-1 infinidb &&\
 	cd infinidb &&\
 	./configure --prefix=/usr/local/Calpont/ &&\
-	make && make install
+	make && make install && cd / && rm -rf /tmp
     
