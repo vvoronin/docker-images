@@ -1,7 +1,7 @@
 FROM vvoronin/ubuntu-tools
 MAINTAINER Viktor Voronin <voronin@x12.su>
 
-RUN /tools/apt build-essential wget libncurses5-dev expect libz-dev libxml2-dev libreadline-dev flex bison  automake1.9 autoconf expect-dev libz-dev libreadline-dev libxml2-dev libncurses-dev git
+RUN /tools/apt build-essential wget libncurses5-dev expect libz-dev libxml2-dev libreadline-dev flex bison  automake1.9 autoconf expect-dev libz-dev libreadline-dev libxml2-dev libncurses-dev git libtool
 
 WORKDIR /build
 
