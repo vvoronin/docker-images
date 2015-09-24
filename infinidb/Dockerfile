@@ -1,21 +1,49 @@
 FROM vvoronin/ubuntu-tools
 MAINTAINER Viktor Voronin <voronin@x12.su>
 
-RUN /tools/apt build-essential wget libncurses5-dev expect libz-dev libxml2-dev libreadline-dev flex bison
+RUN /tools/apt build-essential wget libncurses5-dev expect libz-dev libxml2-dev libreadline-dev flex bison  automake1.9 autoconf expect-dev libz-dev libreadline-dev libxml2-dev libncurses-dev git
 
-WORKDIR /tmp
- 
-RUN wget -Omysql-4.6.2-1.tar.gz https://github.com/infinidb/mysql/archive/4.6.2-1.tar.gz &&\
-	tar -zxf mysql-4.6.2-1.tar.gz &&\
-	ln -s mysql-4.6.2-1 mysql &&\
-	cd mysql &&\
-	./configure --prefix=/usr/local/Calpont/mysql &&\
-    make &&  make install &&\
-    cd .. &&\
-	wget -Oinfinidb-4.6.2-1.tar.gz https://github.com/infinidb/infinidb/archive/4.6.2-1.tar.gz &&\
-	tar -zxf infinidb-4.6.2-1.tar.gz &&\
-	ln -s infinidb-4.6.2-1 infinidb &&\
-	cd infinidb &&\
-	./configure --prefix=/usr/local/Calpont/ &&\
-	make && make install && cd / && rm -rf /tmp/*
-    
+WORKDIR /build
+
+RUN git clone https://github.com/allfs/mysql-1 mysql && rm -r  mysql/.git
+
+WORKDIR /build/mysql
+
+RUN  ./configure --prefix=/usr/local/Calpont/mysql
+
+RUN make && make install
+
+
+WORKDIR /build
+
+RUN git clone https://github.com/vvoronin/infinidb && rm -r  infinidb/.git
+
+
+WORKDIR /build/infinidb
+
+RUN apt-get update && apt-get install -y --force-yes \
+	flex bison  \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN  ./configure --prefix=/usr/local/Calpont
+
+RUN make && make install
+
+RUN /usr/local/Calpont/bin/post-install
+
+RUN cp /usr/local/Calpont/etc/Calpont.xml.singleserver /usr/local/Calpont/etc/Calpont.xml.rpmsave
+
+RUN sed -i 's#<NumBlocksPct>50</NumBlocksPct>#<NumBlocksPct>1</NumBlocksPct>#' /usr/local/Calpont/etc/Calpont.xml.rpmsave
+
+RUN sed -i "s#^EOD#CREATE USER 'root'@'%';\n GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';\nEOD\n#" /usr/local/Calpont/mysql/install_calpont_mysql.sh
+
+RUN /usr/local/Calpont/bin/postConfigure -n
+
+RUN sed -i "s#\[mysqld\]#[mysqld]\nbind-address = 0.0.0.0\n#" /usr/local/Calpont/mysql/my.cnf
+
+RUN sed -i 's#<DirectIO/>#<DirectIO>n</DirectIO>#' /usr/local/Calpont/etc/Calpont.xml
+
+EXPOSE 3306
+CMD /usr/local/Calpont/bin/run.sh /usr/local/Calpont/bin/ProcMon
+
+
