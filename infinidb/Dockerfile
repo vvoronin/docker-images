@@ -21,10 +21,6 @@ RUN git clone https://github.com/vvoronin/infinidb && rm -r  infinidb/.git
 
 WORKDIR /build/infinidb
 
-RUN apt-get update && apt-get install -y --force-yes \
-	flex bison  \
-	&& rm -rf /var/lib/apt/lists/*
-
 RUN  ./configure --prefix=/usr/local/Calpont
 
 RUN make && make install
